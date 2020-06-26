@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+
+{% block head_title %}
+Django Home
+{% endblock head_title %}
+
+
+{% block body_content %}
+<div class='row text-center'>
+    <div class="col">
+        <h2>Welcome to TweetMe</h2>
+    </div>
+</div>
+
+
+<div id="tweets"></div>
+
+
+<script>
+    const tweetsElements = document.getElementById('tweets');
+
+    function handleDidLike(tweet_id, currentCount) {
+        console.log(currentCount);
+    }
+
+    function linkBtn(tweet) {
+        return "<button class='btn btn-primary' onclick=handleDidLike(" + tweet.id + "," + tweet.likes +
+            ")> " +
+            tweet.likes + " Likes</button>";
+    }
+
+    function formatTweetElement(tweet) {
+        var formattedTweet = "<div class='col-12 col-md-10 mx-auto rounded border p-3 mb-2 tweet' id=tweet-" + tweet
+            .id +
+            "><p>" +
+            tweet
+            .content + "</p>" +
+            "<div class='btn-group'>" + linkBtn(tweet) + "</div></div>";
+        return formattedTweet;
+    }
+
+    console.log("here")
+    const xhr = new XMLHttpRequest()
+    const method = "GET"
+    const url = "/tweets/list"
+    const responsType = "json"
+
+    xhr.responseType = responsType
+    xhr.open(method, url, true)
+
+    xhr.onload = () => {
+        if (xhr.readyState == 4) {
+            var serverResponse = xhr.response;
+            var listItems = serverResponse.response;
+
+            var finalTweetStr = "";
+            for (var i = 0; i < listItems.length; i++) {
+                finalTweetStr += formatTweetElement(listItems[i]);
+            }
+            tweetsElements.innerHTML = finalTweetStr;
+        }
+    }
+    xhr.send()
+</script>
+
+{% endblock body_content %}
