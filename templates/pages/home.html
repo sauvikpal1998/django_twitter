@@ -17,7 +17,7 @@ Django Home
     <div class="col-md-4 mx-auto col-10">
         <form class="form" method="POST" action="/tweets/create_tweet">
             {% csrf_token %}
-            <input type="hidden" name="next" value="/">
+            <input type="hidden" name="next" value="http://google.com">
             <textarea class="form-control" name="content" placeholder="Your Tweet...."></textarea>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
