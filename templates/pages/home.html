@@ -13,6 +13,17 @@ Django Home
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-4 mx-auto col-10">
+        <form class="form" method="POST" action="/tweets/create_tweet">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="/">
+            <textarea class="form-control" name="content" placeholder="Your Tweet...."></textarea>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </div>
+</div>
 
 <div id="tweets"></div>
 
