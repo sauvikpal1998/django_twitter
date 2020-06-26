@@ -15,12 +15,20 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def tweet_create_view(request, *args, **kwargs):
+    user = request.user
+    if not request.user.is_authenticated:
+        user = None
+        if request.is_ajax():
+            return JsonResponse({}, status=403)
+        return redirect(settings.LOGIN_URL)
+
     form = TweetForm(request.POST or None)
     next_url = request.POST.get("next") or None
 
     if form.is_valid():
         obj = form.save(commit=False)
         #  do other form related logic
+        obj.user = request.user or None
         obj.save()
 
         # check for ajax request
