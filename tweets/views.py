@@ -15,12 +15,16 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def tweet_create_view(request, *args, **kwargs):
+    print("ajax", request.is_ajax())
     form = TweetForm(request.POST or None)
     next_url = request.POST.get("next") or None
     if form.is_valid():
         obj = form.save(commit=False)
         #  do other form related logic
         obj.save()
+
+        if request.is_ajax():
+            return JsonResponse({}, status=201)  # 201 is for create items
         # reinitialize a new form
 
         if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):

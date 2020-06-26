@@ -15,9 +15,9 @@ Django Home
 
 <div class="row mb-4">
     <div class="col-md-4 mx-auto col-10">
-        <form class="form" method="POST" action="/tweets/create_tweet">
+        <form class="form" id="tweet-create-form" method="POST" action="/tweets/create_tweet">
             {% csrf_token %}
-            <input type="hidden" name="next" value="http://google.com">
+            <input type="hidden" name="next" value="/">
             <textarea class="form-control" name="content" placeholder="Your Tweet...."></textarea>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -29,7 +29,63 @@ Django Home
 
 
 <script>
-    const tweetsElements = document.getElementById('tweets');
+    function handleTweetCreateFormDidSubmit(event) {
+        event.preventDefault();
+        const myForm = event.target;
+        const myFormData = new FormData(myForm);
+
+        // for (var myItem of myFormData.entries()) {
+        //     console.log(myItem);
+        // }
+
+        const url = myForm.getAttribute("action");
+        const method = myForm.getAttribute("method");
+
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest");
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.onload = () => {
+            if (xhr.readyState == 4) {
+                var serverResponse = xhr.response;
+                console.log(serverResponse);
+                loadTweets(tweetsEl);
+            }
+        }
+        xhr.send(myFormData);
+
+    }
+
+    const tweetsEl = document.getElementById('tweets');
+    const tweetCreateFormEl = document.getElementById('tweet-create-form')
+
+    tweetCreateFormEl.addEventListener("submit", handleTweetCreateFormDidSubmit)
+
+    function loadTweets(tweetsElements) {
+        const xhr = new XMLHttpRequest();
+        const method = "GET";
+        const url = "/tweets/list";
+        const responsType = "json";
+
+        xhr.responseType = responsType;
+        xhr.open(method, url, true);
+
+        xhr.onload = () => {
+            if (xhr.readyState == 4) {
+                var serverResponse = xhr.response;
+                var listItems = serverResponse.response;
+
+                var finalTweetStr = "";
+                for (var i = 0; i < listItems.length; i++) {
+                    finalTweetStr += formatTweetElement(listItems[i]);
+                }
+                tweetsElements.innerHTML = finalTweetStr;
+            }
+        }
+        xhr.send();
+    }
+
+    loadTweets(tweetsEl);
 
     function handleDidLike(tweet_id, currentCount) {
         console.log(currentCount);
@@ -52,27 +108,6 @@ Django Home
     }
 
     console.log("here")
-    const xhr = new XMLHttpRequest()
-    const method = "GET"
-    const url = "/tweets/list"
-    const responsType = "json"
-
-    xhr.responseType = responsType
-    xhr.open(method, url, true)
-
-    xhr.onload = () => {
-        if (xhr.readyState == 4) {
-            var serverResponse = xhr.response;
-            var listItems = serverResponse.response;
-
-            var finalTweetStr = "";
-            for (var i = 0; i < listItems.length; i++) {
-                finalTweetStr += formatTweetElement(listItems[i]);
-            }
-            tweetsElements.innerHTML = finalTweetStr;
-        }
-    }
-    xhr.send()
 </script>
 
 {% endblock body_content %}
