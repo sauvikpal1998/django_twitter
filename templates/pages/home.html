@@ -67,15 +67,15 @@ Django Home
                 myForm.reset();
                 handleTweetFormError("", false);
             } else if (xhr.status == 400) {
-                // console.log(xhr.response.content)
-                // alert(xhr.response)
                 handleTweetFormError(xhr.response.content, true);
+            } else if (xhr.status == 403) {
+                handleTweetFormError("You must Login", true);
+                window.location.href = "/login"
             } else if (xhr.status == 500) {
                 console.log("there was a server error")
             }
         }
         xhr.send(myFormData);
-
     }
 
     const tweetsContainerELement = document.getElementById('tweets');

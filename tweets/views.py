@@ -6,6 +6,7 @@ from django.conf import settings
 
 from .forms import TweetForm
 from .models import Tweet
+from .serializers import TweetSerializer
 
 import random
 
@@ -15,6 +16,13 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def tweet_create_view(request, *args, **kwargs):
+    serializer = TweetSerializer(data=request.POST or None)
+    if serializer.is_valid():
+        obj = serializer.save(user=request.user)
+    return JsonResponse({}, status=400)
+
+
+def tweet_create_view_puure_django(request, *args, **kwargs):
     user = request.user
     if not request.user.is_authenticated:
         user = None
