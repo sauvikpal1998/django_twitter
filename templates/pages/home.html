@@ -95,7 +95,7 @@ Django Home
         xhr.onload = () => {
             if (xhr.readyState == 4) {
                 var serverResponse = xhr.response;
-                var listItems = serverResponse.response;
+                var listItems = serverResponse;
 
                 var finalTweetStr = "";
                 for (var i = 0; i < listItems.length; i++) {
